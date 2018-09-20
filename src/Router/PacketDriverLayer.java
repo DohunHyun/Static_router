@@ -11,8 +11,8 @@ import org.jnetpcap.packet.PcapPacketHandler;
 public class PacketDriverLayer extends BaseLayer {
    static {
       try {
-         System.load(new File("jnetpcap.dll").getAbsolutePath());
-         System.out.println(new File("jnetpcap.dll").getAbsolutePath());
+         System.load(new File("jnetpcap_64bit.dll").getAbsolutePath());
+         System.out.println(new File("jnetpcap_64bit.dll").getAbsolutePath());
       } catch (UnsatisfiedLinkError e) {
          System.out.println("Native code library failed to load.\n" + e);
          System.exit(1);
@@ -55,7 +55,7 @@ public class PacketDriverLayer extends BaseLayer {
          int r = Pcap.findAllDevs(adapterList, errorBuffer);
 
       if (r == Pcap.NOT_OK || adapterList.isEmpty())
-         System.out.println("[Error] ³×Æ®¿öÅ© ¾î´ðÅÍ¸¦ ÀÐÁö ¸øÇÏ¿´½À´Ï´Ù. Error : " + errorBuffer.toString());
+         System.out.println("[Error] ï¿½ï¿½Æ®ï¿½ï¿½Å© ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ï¿½Ï´ï¿½. Error : " + errorBuffer.toString());
    }
 
    public ArrayList<PcapIf> getAdapterList() {

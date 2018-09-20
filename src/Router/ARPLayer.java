@@ -3,7 +3,7 @@ package Router;
 import java.util.Arrays;
 
 public class ARPLayer extends BaseLayer {
-	final static int ARP_MAX_SIZE = 28;
+	final static int ARP_MAX_SIZE = 28; 
 	final static int ARP_IP_SIZE = 4;
 	final static int ARP_ETH_SIZE = 6;
 	final static int ARP_STATE_SIZE = 1;
@@ -209,7 +209,7 @@ public class ARPLayer extends BaseLayer {
 		}
 	}
 
-	boolean ARP_request_send(byte[] dest_ip_address) {
+	boolean ARP_request_send(byte[] dest_ip_address) { // ARP request를 보내는 메소드 
 		byte[] send_arp_data = new byte[ARP_MAX_SIZE];
 		byte[] temp = new byte[6];
 		System.arraycopy(ARP_hardtype, 0, send_arp_data, 0, 2);
@@ -236,32 +236,33 @@ public class ARPLayer extends BaseLayer {
 		
 	}
 
-	boolean ARP_reply_send(byte[] data) {
+	boolean ARP_reply_send(byte[] data) { // ARP가 오면 응답을 보내는 메소드 
 
 		byte[] receive_sender_Ethernet = new byte[6];
 		byte[] receive_sender_IP = new byte[4];
 		byte[] receive_target_IP = new byte[4];
 		byte[] receive_target_Ethernet = new byte[6];
 
-		System.arraycopy(data, 8, receive_sender_Ethernet, 0, 6);
+		System.arraycopy(data, 8, receive_sender_Ethernet, 0, 6); // 날라온 packet의 정보들을 저장 
 		System.arraycopy(data, 14, receive_sender_IP, 0, 4);
 		System.arraycopy(data, 18, receive_target_Ethernet, 0, 6);
 		System.arraycopy(data, 24, receive_target_IP, 0, 4);
 
-		setARPCacheTable(receive_sender_IP, receive_sender_Ethernet, (byte) 1);
+		setARPCacheTable(receive_sender_IP, receive_sender_Ethernet, (byte) 1); // 날라온 정보를 토대로 table에 저장 
 
-		if (java.util.Arrays.equals(ARP_senderIPAddr, receive_sender_IP)) {
-			return false;
+		if (java.util.Arrays.equals(ARP_senderIPAddr, receive_sender_IP)) { // 보낸 IP주소와 받은 IP주소가 같으면 false리턴 
+			return false;													// ethernet 업데이트 
 		}
 
-		if (data[6] == 0 && data[7] == 1) {
+		if (data[6] == 0 && data[7] == 1) { // op코드가 01이면 즉 ARP request이면 
 			byte[] conform = new byte[4];
-			conform[0] = data[24];
+			conform[0] = data[24]; // target IP address를 따로 옮겨준다 
 			conform[1] = data[25];
 			conform[2] = data[26];
 			conform[3] = data[27];
 
-			if (java.util.Arrays.equals(receive_sender_Ethernet, receive_target_Ethernet)) {
+			if (java.util.Arrays.equals(receive_sender_Ethernet, receive_target_Ethernet)) { 
+				// 받은 패킷의 보낸 이더넷주소와 타겟의 이더넷주소가 같으면 
 				if (findARPCacheTable(receive_sender_IP) != -1) {
 					setARPCacheTable(receive_sender_IP, receive_sender_Ethernet, (byte) 1);
 					return true;
@@ -273,7 +274,7 @@ public class ARPLayer extends BaseLayer {
 			System.arraycopy(receive_target_IP, 0, data, 14, 4);
 			System.arraycopy(ARP_senderEthAddr, 0, data, 8, 6);
 
-			data[6] = 0;
+			data[6] = 0; // request를 reply로 바꿔주고 
 			data[7] = 2;
 			byte[] frame_type = new byte[2];
 			frame_type[0] = 0x08;
@@ -281,7 +282,7 @@ public class ARPLayer extends BaseLayer {
 			((EthernetLayer) this.getUnderLayer()).sendARP(data);
 			return true;
 
-		} else if (data[6] == 0 && data[7] == 2) {
+		} else if (data[6] == 0 && data[7] == 2) { // op코드가 ARP reply이면 
 			System.arraycopy(data, 8, receive_sender_Ethernet, 0, 6);
 			System.arraycopy(data, 14, receive_sender_IP, 0, 4);
 			if (findARPCacheTable(receive_sender_IP) != -1) {
@@ -292,25 +293,25 @@ public class ARPLayer extends BaseLayer {
 		return true;
 	}
 
-	public void setSrcEthAddress(byte[] src_EthAddress) {
+	public void setSrcEthAddress(byte[] src_EthAddress) { // source 패킷의 ethernet 주소를 설정 
 		ARP_senderEthAddr = Arrays.copyOf(src_EthAddress, src_EthAddress.length);
 	}
 
-	public void setDstIPAddress(String dst_IPAddress) {
+	public void setDstIPAddress(String dst_IPAddress) { // destination 패킷의 IP주소 설정 
 		ARP_targetIPAddr[0] = ((byte) Integer.parseInt(dst_IPAddress.substring(0, 3)));
 		ARP_targetIPAddr[1] = ((byte) Integer.parseInt(dst_IPAddress.substring(3, 6)));
 		ARP_targetIPAddr[2] = ((byte) Integer.parseInt(dst_IPAddress.substring(6, 9)));
 		ARP_targetIPAddr[3] = ((byte) Integer.parseInt(dst_IPAddress.substring(9, 12)));
 	}
 
-	public void setSrcIPAddress(String src_IPAddress) {
+	public void setSrcIPAddress(String src_IPAddress) { // source 패킷의 IP 주소 설정 
 		ARP_senderIPAddr[0] = ((byte) Integer.parseInt(src_IPAddress.substring(0, 3)));
 		ARP_senderIPAddr[1] = ((byte) Integer.parseInt(src_IPAddress.substring(3, 6)));
 		ARP_senderIPAddr[2] = ((byte) Integer.parseInt(src_IPAddress.substring(6, 9)));
 		ARP_senderIPAddr[3] = ((byte) Integer.parseInt(src_IPAddress.substring(9, 12)));
 	}
 
-	public void ARPTable_reset() {
+	public void ARPTable_reset() { // ARP 테이블 리셋 
 		for (int i = 0; i < ARPCacheTableCount; i++) {
 			for (int j = 0; j < ARP_TABLE_SIZE; j++) {
 				ARPCacheTable[i][j] = 0;
@@ -319,7 +320,7 @@ public class ARPLayer extends BaseLayer {
 		ARPCacheTableCount = 0;
 	}
 
-	public void ARPTable_delete() {
+	public void ARPTable_delete() { // ARP 테이블 삭제 
 		if (ARPCacheTableCount > 0) {
 			ARPCacheTableCount--;
 			for (int j = 0; j < ARP_TABLE_SIZE; j++) {
@@ -328,7 +329,7 @@ public class ARPLayer extends BaseLayer {
 		}
 	}
 
-	public void ProxyTable_delete() {
+	public void ProxyTable_delete() { // Proxy 테이블 삭제 
 		if (ARPProxyTable_count > 0) {
 			ARPProxyTable_count--;
 			for (int j = 0; j < ARPProxyTable_count; j++) {
@@ -337,7 +338,7 @@ public class ARPLayer extends BaseLayer {
 		}
 	}
 
-	public void ARPTable_IP_delete(byte[] ip) {
+	public void ARPTable_IP_delete(byte[] ip) { // ARP테이블에서 특정 IP 삭제 
 		if (findARPCacheTable(ip) != -1) {
 			for (int i = findARPCacheTable(ip); i < ARPCacheTableCount - 1; i++) {
 				ARPCacheTable[i] = ARPCacheTable[i + 1];

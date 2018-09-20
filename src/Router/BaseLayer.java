@@ -1,41 +1,41 @@
 package Router;
 
-public abstract class BaseLayer {	//Layer들이 상속받는 Class로 Layer의 기본적인 성질들을 가짐
-	String layerName;	//Layer이름
-	Object upperLayer;	//해당 Layer의 상위 계층
-	Object underLayer;	//해당 Layer의 하위 계층
+public abstract class BaseLayer {
+	String layerName;
+	Object upperLayer;
+	Object underLayer;
 
-	public BaseLayer(String layerName) {	//초기화
+	public BaseLayer(String layerName) {
 		this.layerName = layerName;
 	}
 
-	void setUpperLayer(Object upperLayer) {	//초기화
+	void setUpperLayer(Object upperLayer) {
 		this.upperLayer = upperLayer;
 	}
 
-	void setUnderLayer(Object underLayer) {	//초기화
+	void setUnderLayer(Object underLayer) {
 		this.underLayer = underLayer;
 	}
 
-	Object getUpperLayer() {	//상위 계층 반환해주는 함수
-		if ((Object) upperLayer == null) {	//상위 계층이 null인경우
+	Object getUpperLayer() {
+		if ((Object) upperLayer == null) {
 			System.out.println("[Object-getUnderLayer] There is no UnderLayer");
 			return null;
 		}
 
-		return upperLayer;	//상위 계층 반환
+		return upperLayer;
 	}
 
-	Object getUnderLayer() {	//하위 계층을 반환해주는 함수
-		if ((Object) underLayer == null) {	//하위 계층이 null인 경우
+	Object getUnderLayer() {
+		if ((Object) underLayer == null) {
 			System.out.println("[Object-getUnderLayer] There is no UnderLayer");
 			return null;
 		}
 
-		return underLayer;	//하위 계층 반환
+		return underLayer;
 	}
 
-	String getLayerName() {	//해당 Layer의 이름 반환
+	String getLayerName() {
 		return layerName;
 	}
 }

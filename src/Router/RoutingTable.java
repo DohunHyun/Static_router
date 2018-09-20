@@ -1,16 +1,9 @@
 package Router;
 
-/**
- * Routing table
- * 
- * 라우터가 갖는 Routing table
- * 
- * */
 public class RoutingTable {
-	/*Routing table에 사용 되는 상수 설정*/
-   private final static int RT_DES_SIZE = 4;		//Destination IP 4바이트
-   private final static int RT_NETMASK_SIZE = 4;	//NetMask 4바이트
-   private final static int RT_GATEWAY_SIZE = 4;	//GateWay 4바이트
+   private final static int RT_DES_SIZE = 4;
+   private final static int RT_NETMASK_SIZE = 4;
+   private final static int RT_GATEWAY_SIZE = 4;
 
    private int RT_Index;
    private byte[] RT_des_IP;
@@ -43,13 +36,13 @@ public class RoutingTable {
 
       netmaskCheck = this.netmaskCheckClass(netmaskIP);
       
-      if ((netmaskIP[3] & (byte)0xff) != 0) {		//255.255.255.255
+      if ((netmaskIP[3] & (byte)0xff) != 0) {
          RT_class = 3;
-      } else if ((netmaskIP[2] & (byte)0xff) != 0) {	//255.255.255.0
+      } else if ((netmaskIP[2] & (byte)0xff) != 0) {
          RT_class = 2;
-      } else if ((netmaskIP[1] & (byte)0xff) != 0) {	//255.255.0.0		//기존 코드 오타
+      } else if ((netmaskIP[2] & (byte)0xff) != 0) {
          RT_class = 1;
-      } else {		//255.0.0.0
+      } else {
          RT_class = 0;
       }
 
@@ -92,18 +85,13 @@ public class RoutingTable {
       return this.RT_class;
    }
 
-   /**
-    * NetMask가 255.0.0.0 이면 A클래스
-    * NetMask가 255.255.0.0 이면 B클래스
-    * NetMask가 255.255.255.0 이면 C클래스
-    * */
    private int netmaskCheckClass(byte[] netmaskIP) {
       int count = 0;
 
       for (int i = 0; i < RT_NETMASK_SIZE; i++)
-         if (netmaskIP[i] == (byte)0xff)	//255와 비교		//기존코드에서 byte로 캐스팅 필요
+         if (netmaskIP[i] == 0xff)
             count++;
 
-      return count;		//매개변수로 들어온 netmaskIP중에서 255의 갯수를 반환
+      return count;
    }
 }
